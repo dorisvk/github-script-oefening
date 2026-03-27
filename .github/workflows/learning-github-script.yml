@@ -1,0 +1,42 @@
+name: Learning GitHub Script
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+  contents: read
+  
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Comment on new issue
+        uses: actions/github-script@0.8.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs')
+            const issueBody = fs.readFileSync(".github/ISSUE_RESPONSES/comment.md", "utf8")
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: issueBody
+            })
+
+      - name: Add nerd comment on bug issues
+        if: contains(github.event.issue.title, 'bug')
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "learning-github-script!"
+            })
