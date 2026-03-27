@@ -13,16 +13,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Comment on new issue
-        uses: actions/github-script@0.8.0
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            github.issues.createComment({
+            await github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: "🎉 You've created this issue comment using GitHub Script!!!"
             })
+
       - name: Add nerd comment on bug issues
         if: contains(github.event.issue.title, 'bug')
         uses: actions/github-script@v6
@@ -30,9 +31,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             await github.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: "🤓🤓🤓 Thanks for reporting a bug!"
-            });
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "🤓🤓🤓 Thanks for reporting a bug!"
+            })
 
